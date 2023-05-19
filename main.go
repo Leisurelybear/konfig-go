@@ -1,9 +1,11 @@
 package main
 
-import "konfig-go/router"
+import (
+	"konfig-go/conf"
+	"konfig-go/server"
+)
 
 func main() {
-	r := router.Router()
-	// Listen and Server in 0.0.0.0:8080
-	r.Run(":8080")
+	conf := conf.LoadConf()
+	server.Serve(&conf)
 }
