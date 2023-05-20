@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package pb;
+option go_package = "/pb";
+import "google/api/annotations.proto";
+
+service Konfig {
+  rpc ListConfigs(ListConfigsRequest) returns (ListConfigsResponse){
+    option (google.api.http) = {
+      post: "/config/list"  // 定义 HTTP 路径和方法
+      body: "*"
+    };
+  }
+
+  rpc ListCollection(ListCollectionRequest) returns (ListCollectionResponse) {
+    option (google.api.http) = {
+      post: "/config/list"  // 定义 HTTP 路径和方法
+      body: "*"
+    };
+  }
+}
+
+message ListConfigsRequest {
+  int64 collectionID = 1;
+  string name = 2; // fuzzy
+  int64 sort = 3;
+  int64 pageNum = 4;
+  int64 pageSize = 5;
+}
+
+message ListConfigsResponse {
+  int64 collectionID = 1;
+  string collectionName = 2; // fuzzy
+  int64 sort = 3;
+  int64 pageNum = 4;
+  int64 pageSize = 5;
+  repeated Config configs = 6;
+
+}
+
+message Config {
+  int64 ID = 1;
+  int64 collectionID = 2;
+  string name = 3;
+  string key = 4;
+  string value = 5;
+  string createdBy = 6;
+  string updatedBy = 7;
+  int64 createdAt = 8;
+  int64 updatedAt = 9;
+}
+
+
+message ListCollectionRequest {
+  string name = 1; // fuzzy
+  int64 sort = 2;
+  int64 pageNum = 3;
+  int64 pageSize = 4;
+  string createdBy = 6; // created by username, fuzzy
+}
+
+message ListCollectionResponse {
+  bool isDraft = 1;
+  string result = 2;
+}
