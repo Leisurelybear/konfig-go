@@ -1,6 +1,7 @@
 # config.toml
 [app]
-port=":8080"
+http_port = ":8080"
+grpc_port = ":8081"
 mode = "release"
 
 [mysql]

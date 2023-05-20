@@ -26,8 +26,9 @@ type redisConfig struct {
 }
 
 type appConfig struct {
-	Mode string `toml:"mode"`
-	Port string `toml:"port"`
+	Mode     string `toml:"mode"`
+	HttpPort string `toml:"http_port"`
+	GRPCPort string `toml:"grpc_port"`
 }
 
 var defaultConfig = Config{
@@ -45,7 +46,8 @@ var defaultConfig = Config{
 		DB:       0,
 	},
 	AppConfig: appConfig{
-		Port: ":8080",
-		Mode: gin.ReleaseMode,
+		HttpPort: ":8080",
+		GRPCPort: ":8081",
+		Mode:     gin.ReleaseMode,
 	},
 }
