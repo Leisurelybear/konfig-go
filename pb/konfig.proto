@@ -3,6 +3,7 @@ syntax = "proto3";
 package pb;
 option go_package = "/pb";
 import "google/api/annotations.proto";
+import public "google/protobuf/timestamp.proto";
 
 service Konfig {
   rpc ListConfigs(ListConfigsRequest) returns (ListConfigsResponse){
@@ -48,6 +49,7 @@ message Config {
   string updatedBy = 7;
   int64 createdAt = 8;
   int64 updatedAt = 9;
+  // google.protobuf.Timestamp
 }
 
 
