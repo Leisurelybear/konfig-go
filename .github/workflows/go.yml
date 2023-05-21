@@ -27,5 +27,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: built-artifacts
-        path: ./github/out/   # 可能需要根据实际情况更改路径
+        path: ./   # 可能需要根据实际情况更改路径
 
