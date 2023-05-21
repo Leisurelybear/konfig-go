@@ -15,7 +15,7 @@ service Konfig {
 
   rpc ListCollection(ListCollectionRequest) returns (ListCollectionResponse) {
     option (google.api.http) = {
-      post: "/config/list"  // 定义 HTTP 路径和方法
+      post: "/collection/list"  // 定义 HTTP 路径和方法
       body: "*"
     };
   }

@@ -134,7 +134,7 @@ func RegisterKonfigHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.Konfig/ListCollection", runtime.WithHTTPPathPattern("/config/list"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pb.Konfig/ListCollection", runtime.WithHTTPPathPattern("/collection/list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -216,7 +216,7 @@ func RegisterKonfigHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/pb.Konfig/ListCollection", runtime.WithHTTPPathPattern("/config/list"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/pb.Konfig/ListCollection", runtime.WithHTTPPathPattern("/collection/list"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -238,7 +238,7 @@ func RegisterKonfigHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 var (
 	pattern_Konfig_ListConfigs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"config", "list"}, ""))
 
-	pattern_Konfig_ListCollection_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"config", "list"}, ""))
+	pattern_Konfig_ListCollection_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"collection", "list"}, ""))
 )
 
 var (

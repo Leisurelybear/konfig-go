@@ -21,10 +21,10 @@ const (
 )
 
 type ILog interface {
-	Info(ctx context.Context, message string)
-	Warn(ctx context.Context, message string)
-	Debug(ctx context.Context, message string)
-	Error(ctx context.Context, message string)
+	Info(ctx context.Context, message string, args ...interface{})
+	Warn(ctx context.Context, message string, args ...interface{})
+	Debug(ctx context.Context, message string, args ...interface{})
+	Error(ctx context.Context, message string, args ...interface{})
 }
 
 type DefaultLogger struct {
@@ -48,24 +48,24 @@ func NewDefaultLogger() *DefaultLogger {
 	}
 }
 
-func (l *DefaultLogger) Info(ctx context.Context, message string) {
-	l.log(ctx, Info, message)
+func (l *DefaultLogger) Info(ctx context.Context, message string, args ...interface{}) {
+	l.log(ctx, Info, message, args)
 }
 
-func (l *DefaultLogger) Warn(ctx context.Context, message string) {
-	l.log(ctx, Warn, message)
+func (l *DefaultLogger) Warn(ctx context.Context, message string, args ...interface{}) {
+	l.log(ctx, Warn, message, args)
 }
 
-func (l *DefaultLogger) Debug(ctx context.Context, message string) {
-	l.log(ctx, Debug, message)
+func (l *DefaultLogger) Debug(ctx context.Context, message string, args ...interface{}) {
+	l.log(ctx, Debug, message, args)
 }
 
-func (l *DefaultLogger) Error(ctx context.Context, message string) {
-	l.log(ctx, Error, message)
+func (l *DefaultLogger) Error(ctx context.Context, message string, args ...interface{}) {
+	l.log(ctx, Error, message, args)
 }
 
-func (l *DefaultLogger) log(ctx context.Context, level LogLevel, message string) {
-	logMessage := fmt.Sprintf("%s", message)
+func (l *DefaultLogger) log(ctx context.Context, level LogLevel, message string, args ...interface{}) {
+	logMessage := fmt.Sprintf(message, args)
 
 	switch level {
 	case Info:
