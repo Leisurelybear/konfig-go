@@ -10,30 +10,21 @@ import (
 
 func List(ctx context.Context, request *pb.ListConfigsRequest) (*pb.ListConfigsResponse, error) {
 
-	collection, err := mysql.CollectionDAO.GetById(request.CollectionID)
+	collection, err := mysql.CollectionDAO.GetById(ctx, request.CollectionID)
 	if err != nil {
 		logger.Logger.Error(ctx, "error to find collection [cid:%d,err:%v]", request.CollectionID, err)
 		return nil, errorutils.Wrap(err)
 	}
 
-	configs, err := mysql.ConfigDAO.GetByCollectionID(int32(request.CollectionID))
+	configs, err := mysql.ConfigDAO.SearchWithPaging(ctx, request.CollectionID, request.Name, request.Sort, int(request.PageNum), int(request.PageSize))
 	if err != nil {
+		logger.Logger.Error(ctx, "error to find collection [cid:%d,err:%v]", request.CollectionID, err)
 		return nil, errorutils.Wrap(err)
 	}
 
 	respConfigs := []*pb.Config{}
 	for _, c := range configs {
-		respConfigs = append(respConfigs, &pb.Config{
-			ID:           int64(c.ID),
-			CollectionID: c.CollectionId,
-			Name:         c.Name,
-			Key:          c.Key,
-			Value:        c.Value,
-			CreatedBy:    c.CreatedBy,
-			UpdatedBy:    c.UpdatedBy,
-			CreatedAt:    c.CreatedAt.Unix(),
-			UpdatedAt:    c.UpdatedAt.Unix(),
-		})
+		respConfigs = append(respConfigs, c.ConvertToDTO())
 	}
 
 	return &pb.ListConfigsResponse{

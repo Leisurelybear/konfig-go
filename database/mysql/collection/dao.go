@@ -1,13 +1,40 @@
 package collection
 
-import "gorm.io/gorm"
+import (
+	"context"
+	"gorm.io/gorm"
+	"konfig-go/pb"
+)
+
+const (
+	Draft      = 0
+	Production = 1
+)
 
 type Collection struct {
 	gorm.Model
 	Name      string `gorm:"column:name;type:VARCHAR(255);"`
-	IsDraft   int32  `gorm:"column:is_draft;type:INT(11);NOT NULL"`
+	Version   int32  `gorm:"column:version;type:INT(11);NOT NULL"`
+	Desc      string `gorm:"column:desc;type:VARCHAR(255);"`
 	UpdatedBy string `gorm:"column:updated_by;type:VARCHAR(40);"`
 	CreatedBy string `gorm:"column:created_by;type:VARCHAR(40);"`
+}
+
+func (table *Collection) ConvertToDTO() *pb.Collection {
+	return &pb.Collection{
+		ID:        int64(table.ID),
+		Name:      table.Name,
+		Desc:      table.Desc,
+		IsDraft:   table.IsDraft(),
+		CreatedBy: table.CreatedBy,
+		UpdatedBy: table.UpdatedBy,
+		CreatedAt: table.CreatedAt.Unix(),
+		UpdatedAt: table.UpdatedAt.Unix(),
+	}
+}
+
+func (table *Collection) IsDraft() bool {
+	return table.Version == Draft
 }
 
 func (table *Collection) TableName() string {
@@ -24,19 +51,20 @@ func NewCollectionDAO(db *gorm.DB) *CollectionDAO {
 	}
 }
 
-func (dao *CollectionDAO) Create(collection *Collection) error {
+func (dao *CollectionDAO) Create(ctx context.Context, collection *Collection) error {
 	return dao.db.Create(collection).Error
 }
 
-func (dao *CollectionDAO) Update(collection *Collection) error {
+func (dao *CollectionDAO) Update(ctx context.Context, collection *Collection) error {
+	collection.Version = Draft
 	return dao.db.Save(collection).Error
 }
 
-func (dao *CollectionDAO) Delete(collection *Collection) error {
+func (dao *CollectionDAO) Delete(ctx context.Context, collection *Collection) error {
 	return dao.db.Delete(collection).Error
 }
 
-func (dao *CollectionDAO) GetById(id int64) (*Collection, error) {
+func (dao *CollectionDAO) GetById(ctx context.Context, id int64) (*Collection, error) {
 	var collection Collection
 	err := dao.db.First(&collection, id).Error
 	if err != nil {
@@ -45,7 +73,7 @@ func (dao *CollectionDAO) GetById(id int64) (*Collection, error) {
 	return &collection, nil
 }
 
-func (dao *CollectionDAO) GetAll() ([]*Collection, error) {
+func (dao *CollectionDAO) GetAll(ctx context.Context) ([]*Collection, error) {
 	var collections []*Collection
 	err := dao.db.Find(&collections).Error
 	if err != nil {

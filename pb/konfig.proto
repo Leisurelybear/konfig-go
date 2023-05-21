@@ -21,6 +21,13 @@ service Konfig {
       body: "*"
     };
   }
+
+  rpc CollectionDetail(CollectionDetailRequest) returns (CollectionDetailResponse) {
+    option (google.api.http) = {
+      post: "/collection/detail"  // 定义 HTTP 路径和方法
+      body: "*"
+    };
+  }
 }
 
 message ListConfigsRequest {
@@ -56,8 +63,8 @@ message Config {
 
 message Collection {
   int64 ID = 1;
-  int64 collectionID = 2;
-  string name = 3;
+  string name = 2;
+  string desc = 3;
   bool isDraft = 4;
   repeated Config configs = 5;
   string createdBy = 6;
@@ -80,4 +87,12 @@ message ListCollectionResponse {
   int64 pageNum = 3;
   int64 pageSize = 4;
   repeated Collection collections = 5;
+}
+
+message CollectionDetailRequest {
+  int64 collectionID = 1;
+}
+
+message CollectionDetailResponse {
+  Collection collection = 1;
 }

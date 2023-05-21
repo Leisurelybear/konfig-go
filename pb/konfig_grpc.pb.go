@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type KonfigClient interface {
 	ListConfigs(ctx context.Context, in *ListConfigsRequest, opts ...grpc.CallOption) (*ListConfigsResponse, error)
 	ListCollection(ctx context.Context, in *ListCollectionRequest, opts ...grpc.CallOption) (*ListCollectionResponse, error)
+	CollectionDetail(ctx context.Context, in *CollectionDetailRequest, opts ...grpc.CallOption) (*CollectionDetailResponse, error)
 }
 
 type konfigClient struct {
@@ -48,12 +49,22 @@ func (c *konfigClient) ListCollection(ctx context.Context, in *ListCollectionReq
 	return out, nil
 }
 
+func (c *konfigClient) CollectionDetail(ctx context.Context, in *CollectionDetailRequest, opts ...grpc.CallOption) (*CollectionDetailResponse, error) {
+	out := new(CollectionDetailResponse)
+	err := c.cc.Invoke(ctx, "/pb.Konfig/CollectionDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // KonfigServer is the server API for Konfig service.
 // All implementations must embed UnimplementedKonfigServer
 // for forward compatibility
 type KonfigServer interface {
 	ListConfigs(context.Context, *ListConfigsRequest) (*ListConfigsResponse, error)
 	ListCollection(context.Context, *ListCollectionRequest) (*ListCollectionResponse, error)
+	CollectionDetail(context.Context, *CollectionDetailRequest) (*CollectionDetailResponse, error)
 	mustEmbedUnimplementedKonfigServer()
 }
 
@@ -66,6 +77,9 @@ func (UnimplementedKonfigServer) ListConfigs(context.Context, *ListConfigsReques
 }
 func (UnimplementedKonfigServer) ListCollection(context.Context, *ListCollectionRequest) (*ListCollectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCollection not implemented")
+}
+func (UnimplementedKonfigServer) CollectionDetail(context.Context, *CollectionDetailRequest) (*CollectionDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectionDetail not implemented")
 }
 func (UnimplementedKonfigServer) mustEmbedUnimplementedKonfigServer() {}
 
@@ -116,6 +130,24 @@ func _Konfig_ListCollection_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Konfig_CollectionDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CollectionDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KonfigServer).CollectionDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Konfig/CollectionDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KonfigServer).CollectionDetail(ctx, req.(*CollectionDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Konfig_ServiceDesc is the grpc.ServiceDesc for Konfig service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +162,10 @@ var Konfig_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCollection",
 			Handler:    _Konfig_ListCollection_Handler,
+		},
+		{
+			MethodName: "CollectionDetail",
+			Handler:    _Konfig_CollectionDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
