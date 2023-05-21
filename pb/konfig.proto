@@ -5,6 +5,8 @@ option go_package = "/pb";
 import "google/api/annotations.proto";
 import public "google/protobuf/timestamp.proto";
 
+//go:generate cd konfig-go
+//go:generate protoc --go_out=. --go-grpc_out=. --grpc-gateway_out=. --proto_path=./pb ./pb/konfig.proto
 service Konfig {
   rpc ListConfigs(ListConfigsRequest) returns (ListConfigsResponse){
     option (google.api.http) = {
@@ -52,6 +54,18 @@ message Config {
   // google.protobuf.Timestamp
 }
 
+message Collection {
+  int64 ID = 1;
+  int64 collectionID = 2;
+  string name = 3;
+  bool isDraft = 4;
+  repeated Config configs = 5;
+  string createdBy = 6;
+  string updatedBy = 7;
+  int64 createdAt = 8;
+  int64 updatedAt = 9;
+}
+
 
 message ListCollectionRequest {
   string name = 1; // fuzzy
@@ -62,6 +76,8 @@ message ListCollectionRequest {
 }
 
 message ListCollectionResponse {
-  bool isDraft = 1;
-  string result = 2;
+  int64 sort = 2;
+  int64 pageNum = 3;
+  int64 pageSize = 4;
+  repeated Collection collections = 5;
 }

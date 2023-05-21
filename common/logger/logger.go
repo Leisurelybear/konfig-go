@@ -35,10 +35,10 @@ type DefaultLogger struct {
 }
 
 func NewDefaultLogger() *DefaultLogger {
-	infoLogger := log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	warnLogger := log.New(os.Stdout, "WARN: ", log.Ldate|log.Ltime|log.Lshortfile)
-	debugLogger := log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
-	errorLogger := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	infoLogger := log.New(os.Stdout, "[INFO] ", log.Ldate|log.Ltime|log.Lshortfile)
+	warnLogger := log.New(os.Stdout, "[WARN] ", log.Ldate|log.Ltime|log.Llongfile)
+	debugLogger := log.New(os.Stdout, "[DEBUG] ", log.Ldate|log.Ltime|log.Llongfile)
+	errorLogger := log.New(os.Stderr, "[ERROR] ", log.Ldate|log.Ltime|log.Llongfile)
 
 	return &DefaultLogger{
 		infoLogger:  infoLogger,
@@ -49,24 +49,23 @@ func NewDefaultLogger() *DefaultLogger {
 }
 
 func (l *DefaultLogger) Info(ctx context.Context, message string, args ...interface{}) {
-	l.log(ctx, Info, message, args)
+	l.log(ctx, Info, message, args...)
 }
 
 func (l *DefaultLogger) Warn(ctx context.Context, message string, args ...interface{}) {
-	l.log(ctx, Warn, message, args)
+	l.log(ctx, Warn, message, args...)
 }
 
 func (l *DefaultLogger) Debug(ctx context.Context, message string, args ...interface{}) {
-	l.log(ctx, Debug, message, args)
+	l.log(ctx, Debug, message, args...)
 }
 
 func (l *DefaultLogger) Error(ctx context.Context, message string, args ...interface{}) {
-	l.log(ctx, Error, message, args)
+	l.log(ctx, Error, message, args...)
 }
 
 func (l *DefaultLogger) log(ctx context.Context, level LogLevel, message string, args ...interface{}) {
-	logMessage := fmt.Sprintf(message, args)
-
+	logMessage := fmt.Sprintf(message, args...)
 	switch level {
 	case Info:
 		l.infoLogger.Println(logMessage)

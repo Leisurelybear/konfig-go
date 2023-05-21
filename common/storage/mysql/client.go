@@ -12,7 +12,7 @@ import (
 var Cli *Client
 
 type Client struct {
-	db *gorm.DB
+	DB *gorm.DB
 }
 
 func NewClient(config conf.Config) (*Client, error) {
@@ -28,17 +28,17 @@ func NewClient(config conf.Config) (*Client, error) {
 	)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		logger.Logger.Error(ctx, "error to connect DB,")
+		logger.Logger.Error(ctx, "errorutils to connect DB,")
 		return nil, err
 	}
 
 	return &Client{
-		db: db,
+		DB: db,
 	}, nil
 }
 
 func (c *Client) Close() error {
-	sqlDB, err := c.db.DB()
+	sqlDB, err := c.DB.DB()
 	if err != nil {
 		return err
 	}

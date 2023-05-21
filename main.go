@@ -1,8 +1,9 @@
 package main
 
 import (
-	"konfig-go/common/storage/mysql"
+	"konfig-go/common/storage"
 	"konfig-go/conf"
+	"konfig-go/database/mysql"
 	"konfig-go/server/grpc"
 	"konfig-go/server/http"
 )
@@ -16,15 +17,15 @@ func main() {
 	config := conf.LoadConf()
 
 	// init mysql
-	mysql.Cli, _ = mysql.NewClient(config)
+	storage.Init(config)
+
+	// init dao
+	mysql.Init()
 
 	defer Close()
 	Serve(config)
 }
 
 func Close() {
-	err := mysql.Cli.Close()
-	if err != nil {
 
-	}
 }
