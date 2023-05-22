@@ -1,5 +1,5 @@
 ## How to dev
-1. install protoc tools
+1. install protobuf tools
 ```
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.2
