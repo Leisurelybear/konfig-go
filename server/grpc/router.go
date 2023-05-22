@@ -22,3 +22,6 @@ func (s *server) ListCollection(ctx context.Context, request *pb.ListCollectionR
 func (s *server) CollectionDetail(ctx context.Context, request *pb.CollectionDetailRequest) (*pb.CollectionDetailResponse, error) {
 	return collection.Detail(ctx, request)
 }
+func (s *server) UpsertConfig(ctx context.Context, request *pb.UpsertConfigRequest) (*pb.UpsertConfigResponse, error) {
+	return config.Upsert(ctx, request)
+}

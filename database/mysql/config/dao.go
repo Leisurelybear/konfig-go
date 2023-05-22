@@ -13,7 +13,7 @@ type Config struct {
 	Name         string `gorm:"column:name;type:VARCHAR(255);"`
 	Key          string `gorm:"column:key;type:VARCHAR(255);NOT NULL"`
 	Value        string `gorm:"column:value;type:TEXT;"`
-	IsDraft      int8   `gorm:"column:is_draft;type:TINYINT(2);NOT NULL"`
+	Version      int8   `gorm:"column:version;type:TINYINT(2);NOT NULL"`
 	UpdatedBy    string `gorm:"column:updated_by;type:VARCHAR(40);"`
 	CreatedBy    string `gorm:"column:created_by;type:VARCHAR(40);"`
 }
