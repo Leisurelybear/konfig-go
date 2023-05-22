@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type KonfigClient interface {
 	ListConfigs(ctx context.Context, in *ListConfigsRequest, opts ...grpc.CallOption) (*ListConfigsResponse, error)
+	UpsertConfig(ctx context.Context, in *UpsertConfigRequest, opts ...grpc.CallOption) (*UpsertConfigResponse, error)
 	ListCollection(ctx context.Context, in *ListCollectionRequest, opts ...grpc.CallOption) (*ListCollectionResponse, error)
 	CollectionDetail(ctx context.Context, in *CollectionDetailRequest, opts ...grpc.CallOption) (*CollectionDetailResponse, error)
 }
@@ -34,6 +35,15 @@ func NewKonfigClient(cc grpc.ClientConnInterface) KonfigClient {
 func (c *konfigClient) ListConfigs(ctx context.Context, in *ListConfigsRequest, opts ...grpc.CallOption) (*ListConfigsResponse, error) {
 	out := new(ListConfigsResponse)
 	err := c.cc.Invoke(ctx, "/pb.Konfig/ListConfigs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *konfigClient) UpsertConfig(ctx context.Context, in *UpsertConfigRequest, opts ...grpc.CallOption) (*UpsertConfigResponse, error) {
+	out := new(UpsertConfigResponse)
+	err := c.cc.Invoke(ctx, "/pb.Konfig/UpsertConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +73,7 @@ func (c *konfigClient) CollectionDetail(ctx context.Context, in *CollectionDetai
 // for forward compatibility
 type KonfigServer interface {
 	ListConfigs(context.Context, *ListConfigsRequest) (*ListConfigsResponse, error)
+	UpsertConfig(context.Context, *UpsertConfigRequest) (*UpsertConfigResponse, error)
 	ListCollection(context.Context, *ListCollectionRequest) (*ListCollectionResponse, error)
 	CollectionDetail(context.Context, *CollectionDetailRequest) (*CollectionDetailResponse, error)
 	mustEmbedUnimplementedKonfigServer()
@@ -74,6 +85,9 @@ type UnimplementedKonfigServer struct {
 
 func (UnimplementedKonfigServer) ListConfigs(context.Context, *ListConfigsRequest) (*ListConfigsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListConfigs not implemented")
+}
+func (UnimplementedKonfigServer) UpsertConfig(context.Context, *UpsertConfigRequest) (*UpsertConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertConfig not implemented")
 }
 func (UnimplementedKonfigServer) ListCollection(context.Context, *ListCollectionRequest) (*ListCollectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCollection not implemented")
@@ -108,6 +122,24 @@ func _Konfig_ListConfigs_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(KonfigServer).ListConfigs(ctx, req.(*ListConfigsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Konfig_UpsertConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KonfigServer).UpsertConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Konfig/UpsertConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KonfigServer).UpsertConfig(ctx, req.(*UpsertConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -158,6 +190,10 @@ var Konfig_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListConfigs",
 			Handler:    _Konfig_ListConfigs_Handler,
+		},
+		{
+			MethodName: "UpsertConfig",
+			Handler:    _Konfig_UpsertConfig_Handler,
 		},
 		{
 			MethodName: "ListCollection",

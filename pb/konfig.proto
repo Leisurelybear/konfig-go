@@ -15,6 +15,13 @@ service Konfig {
     };
   }
 
+  rpc UpsertConfig(UpsertConfigRequest) returns (UpsertConfigResponse){
+    option (google.api.http) = {
+      post: "/config/upsert"  // 定义 HTTP 路径和方法
+      body: "*"
+    };
+  }
+
   rpc ListCollection(ListCollectionRequest) returns (ListCollectionResponse) {
     option (google.api.http) = {
       post: "/collection/list"  // 定义 HTTP 路径和方法
@@ -95,4 +102,15 @@ message CollectionDetailRequest {
 
 message CollectionDetailResponse {
   Collection collection = 1;
+}
+
+message UpsertConfigRequest{
+  int64 ID = 1;
+  int64 collectionID = 2;
+  string name = 3;
+  string key = 4;
+  string value = 5;
+}
+message UpsertConfigResponse{
+  Config config = 1;
 }
