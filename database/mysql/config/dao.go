@@ -4,6 +4,7 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"konfig-go/common/logger"
+	"konfig-go/common/storage/mysql"
 	"konfig-go/pb"
 )
 
@@ -95,6 +96,7 @@ func (dao *ConfigDAO) SearchWithPaging(ctx context.Context, collectionID int64, 
 		nameFuzey := "%" + name + "%"
 		query.Where("`name` LIKE ?", nameFuzey)
 	}
+	mysql.AppendOrderBy(query, "id", sort)
 	err := query.Find(&configs).Error
 	if err != nil {
 		return nil, err
@@ -109,4 +111,27 @@ func (dao *ConfigDAO) GetByCollectionIDAndKey(ctx context.Context, collectionID 
 		return nil, err
 	}
 	return &config, nil
+}
+
+func (dao *ConfigDAO) CountByCollectionIDs(ctx context.Context, collectionIDs []int64) (map[int64]int64, error) {
+	var results []struct {
+		CollectionID int64
+		Count        int64
+	}
+	countMap := make(map[int64]int64)
+
+	err := dao.db.WithContext(ctx).Model(&Config{}).
+		Select("collection_id, COUNT(*) as count").
+		Where("collection_id IN ?", collectionIDs).
+		Group("collection_id").
+		Find(&results).Error
+	if err != nil {
+		logger.Logger.Error(ctx, "error to count configs by collectionIDs, err:%v", err)
+		return countMap, nil
+	}
+
+	for _, result := range results {
+		countMap[result.CollectionID] = result.Count
+	}
+	return countMap, nil
 }

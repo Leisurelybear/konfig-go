@@ -6,6 +6,7 @@ import (
 	"konfig-go/common/auth"
 	"konfig-go/conf"
 	"konfig-go/pb"
+	"konfig-go/router"
 	"log"
 	"net"
 )
@@ -20,7 +21,7 @@ func Run(config conf.Config) {
 		grpc.UnaryInterceptor(auth.AuthInterceptor), // auth
 	)
 
-	pb.RegisterKonfigServer(s, &server{})
+	pb.RegisterKonfigServer(s, &router.Server{})
 
 	fmt.Println("gRPC server listening on port ", config.AppConfig.GRPCPort)
 	if err := s.Serve(lis); err != nil {
