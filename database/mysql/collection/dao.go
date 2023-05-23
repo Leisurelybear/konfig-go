@@ -52,21 +52,21 @@ func NewCollectionDAO(db *gorm.DB) *CollectionDAO {
 }
 
 func (dao *CollectionDAO) Create(ctx context.Context, collection *Collection) error {
-	return dao.db.Create(collection).Error
+	return dao.db.WithContext(ctx).Create(collection).Error
 }
 
 func (dao *CollectionDAO) Update(ctx context.Context, collection *Collection) error {
 	collection.Version = Draft
-	return dao.db.Save(collection).Error
+	return dao.db.WithContext(ctx).Save(collection).Error
 }
 
 func (dao *CollectionDAO) Delete(ctx context.Context, collection *Collection) error {
-	return dao.db.Delete(collection).Error
+	return dao.db.WithContext(ctx).Delete(collection).Error
 }
 
 func (dao *CollectionDAO) GetById(ctx context.Context, id int64) (*Collection, error) {
 	var collection Collection
-	err := dao.db.First(&collection, id).Error
+	err := dao.db.WithContext(ctx).First(&collection, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (dao *CollectionDAO) GetById(ctx context.Context, id int64) (*Collection, e
 
 func (dao *CollectionDAO) GetAll(ctx context.Context) ([]*Collection, error) {
 	var collections []*Collection
-	err := dao.db.Find(&collections).Error
+	err := dao.db.WithContext(ctx).Find(&collections).Error
 	if err != nil {
 		return nil, err
 	}

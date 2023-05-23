@@ -46,23 +46,23 @@ func NewConfigDAO(db *gorm.DB) *ConfigDAO {
 
 // Create creates a new config
 func (dao *ConfigDAO) Create(ctx context.Context, config *Config) error {
-	return dao.db.Create(config).Error
+	return dao.db.WithContext(ctx).Create(config).Error
 }
 
 // Update updates an existing config
 func (dao *ConfigDAO) Update(ctx context.Context, config *Config) error {
-	return dao.db.Save(config).Error
+	return dao.db.WithContext(ctx).Save(config).Error
 }
 
 // Delete deletes a config
 func (dao *ConfigDAO) Delete(ctx context.Context, config *Config) error {
-	return dao.db.Delete(config).Error
+	return dao.db.WithContext(ctx).Delete(config).Error
 }
 
 // GetByID gets a config by ID
 func (dao *ConfigDAO) GetByID(ctx context.Context, id uint) (*Config, error) {
 	var config Config
-	if err := dao.db.First(&config, id).Error; err != nil {
+	if err := dao.db.WithContext(ctx).First(&config, id).Error; err != nil {
 		return nil, err
 	}
 	return &config, nil
@@ -71,7 +71,7 @@ func (dao *ConfigDAO) GetByID(ctx context.Context, id uint) (*Config, error) {
 // GetAll gets all configs
 func (dao *ConfigDAO) GetAll(ctx context.Context) ([]*Config, error) {
 	var configs []*Config
-	if err := dao.db.Find(&configs).Error; err != nil {
+	if err := dao.db.WithContext(ctx).Find(&configs).Error; err != nil {
 		return nil, err
 	}
 	return configs, nil
@@ -79,7 +79,7 @@ func (dao *ConfigDAO) GetAll(ctx context.Context) ([]*Config, error) {
 
 func (dao *ConfigDAO) GetByCollectionID(ctx context.Context, collectionId int32) ([]*Config, error) {
 	var configs []*Config
-	err := dao.db.Where("collection_id = ?", collectionId).Find(&configs).Error
+	err := dao.db.WithContext(ctx).Where("collection_id = ?", collectionId).Find(&configs).Error
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func (dao *ConfigDAO) SearchWithPaging(ctx context.Context, collectionID int64, 
 	logger.Logger.Info(ctx, "[config]search with paging, %v_%v_%v_%v_%v_", collectionID, name, sort, pageSize, pageNum)
 	var configs []*Config
 	offset := (pageNum - 1) * pageSize
-	query := dao.db.Offset(offset).Limit(pageSize).Where("collection_id = ?", collectionID)
+	query := dao.db.WithContext(ctx).Offset(offset).Limit(pageSize).Where("collection_id = ?", collectionID)
 	if len(name) != 0 {
 		nameFuzey := "%" + name + "%"
 		query.Where("`name` LIKE ?", nameFuzey)
@@ -100,4 +100,13 @@ func (dao *ConfigDAO) SearchWithPaging(ctx context.Context, collectionID int64, 
 		return nil, err
 	}
 	return configs, nil
+}
+
+// GetByCollectionIDAndKey gets a config by cid and key to check dup
+func (dao *ConfigDAO) GetByCollectionIDAndKey(ctx context.Context, collectionID int64, key string) (*Config, error) {
+	var config Config
+	if err := dao.db.WithContext(ctx).Where("collection_id = ? AND key = ?", collectionID, key).First(&config).Error; err != nil {
+		return nil, err
+	}
+	return &config, nil
 }
