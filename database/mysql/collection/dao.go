@@ -2,6 +2,7 @@ package collection
 
 import (
 	"context"
+	"fmt"
 	"gorm.io/gorm"
 	"konfig-go/common/storage/mysql"
 	"konfig-go/pb"
@@ -83,7 +84,8 @@ func (dao *CollectionDAO) GetAll(ctx context.Context) ([]*Collection, error) {
 	return collections, nil
 }
 
-func (dao *CollectionDAO) SearchWithPaging(ctx context.Context, name string, createBy string, sort int64, pageNum int, pageSize int) ([]*Collection, error) {
+func (dao *CollectionDAO) SearchWithPaging(ctx context.Context, name string, createdBy string, sort int64, pageNum int, pageSize int) ([]*Collection, error) {
+	fmt.Println(name, createdBy, sort)
 	var colls []*Collection
 	offset := (pageNum - 1) * pageSize
 	query := dao.db.WithContext(ctx).Offset(offset).Limit(pageSize)
@@ -91,8 +93,8 @@ func (dao *CollectionDAO) SearchWithPaging(ctx context.Context, name string, cre
 		nameFuzey := "%" + name + "%"
 		query.Where("`name` LIKE ?", nameFuzey)
 	}
-	if len(createBy) != 0 {
-		createByFuzey := "%" + createBy + "%"
+	if len(createdBy) != 0 {
+		createByFuzey := "%" + createdBy + "%"
 		query.Where("`created_by` LIKE ?", createByFuzey)
 	}
 	mysql.AppendOrderBy(query, "id", sort)
