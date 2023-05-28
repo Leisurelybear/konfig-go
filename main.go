@@ -1,6 +1,7 @@
 package main
 
 import (
+	"konfig-go/common/messagequeue"
 	"konfig-go/common/storage"
 	"konfig-go/conf"
 	"konfig-go/database/mysql"
@@ -14,6 +15,8 @@ func Serve(conf conf.Config) {
 }
 
 func main() {
+	defer Close()
+
 	config := conf.LoadConf()
 
 	// init mysql
@@ -22,7 +25,9 @@ func main() {
 	// init dao
 	mysql.Init()
 
-	defer Close()
+	// initProducer
+	messagequeue.Init()
+
 	Serve(config)
 }
 
