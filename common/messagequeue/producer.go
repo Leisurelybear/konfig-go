@@ -19,7 +19,7 @@ func NewProducer(messageStore MessageStore) *Producer {
 	}
 }
 func (producer *Producer) Produce(ctx context.Context, topic string, messageData interface{}) error {
-	err := producer.MessageStore.SaveMessage(topic, messageData)
+	err := producer.MessageStore.SaveMessage(ctx, topic, messageData)
 	if err != nil {
 		logger.Logger.Error(ctx, "Failed to save message: %v\n", err)
 	}

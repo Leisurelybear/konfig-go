@@ -32,7 +32,7 @@ func NewConsumer(id int, topic string, offset int, messageStore MessageStore) *C
 
 func (consumer *Consumer) Consume(ctx context.Context, handleFunc func(data interface{}) error) {
 	for {
-		messages, err := consumer.MessageStore.GetMessages(consumer.Topic)
+		messages, err := consumer.MessageStore.GetMessages(ctx, consumer.Topic)
 		if err != nil {
 			fmt.Sprintf("Failed to get messages: %v\n", err)
 			return
