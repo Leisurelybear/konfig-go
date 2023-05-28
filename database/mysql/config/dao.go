@@ -107,7 +107,7 @@ func (dao *ConfigDAO) SearchWithPaging(ctx context.Context, collectionID int64, 
 // GetByCollectionIDAndKey gets a config by cid and key to check dup
 func (dao *ConfigDAO) GetByCollectionIDAndKey(ctx context.Context, collectionID int64, key string) (*Config, error) {
 	var config Config
-	if err := dao.db.WithContext(ctx).Where("collection_id = ? AND key = ?", collectionID, key).First(&config).Error; err != nil {
+	if err := dao.db.WithContext(ctx).Where("`collection_id` = ? AND `key` = ?", collectionID, key).First(&config).Error; err != nil {
 		return nil, err
 	}
 	return &config, nil

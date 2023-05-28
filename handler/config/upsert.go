@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"konfig-go/common/errorutils"
 	"konfig-go/common/logger"
+	"konfig-go/common/messagequeue"
 	"konfig-go/database/mysql"
 	"konfig-go/database/mysql/collection"
 	"konfig-go/database/mysql/config"
@@ -47,7 +48,10 @@ func Upsert(ctx context.Context, request *pb.UpsertConfigRequest) (*pb.UpsertCon
 	if err != nil {
 		logger.Logger.Error(ctx, "error to set collection to draft[er:%v]", err)
 	}
-
+	err = messagequeue.Produce.Produce(ctx, "config", newConfig)
+	if err != nil {
+		logger.Logger.Error(ctx, "error to produce config update message, err:%v", err)
+	}
 	return &pb.UpsertConfigResponse{Config: newConfig.ConvertToDTO()}, nil
 }
 
