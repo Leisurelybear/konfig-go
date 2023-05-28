@@ -20,7 +20,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type KonfigClient interface {
 	ListConfigs(ctx context.Context, in *ListConfigsRequest, opts ...grpc.CallOption) (*ListConfigsResponse, error)
-	UpsertConfig(ctx context.Context, in *UpsertConfigRequest, opts ...grpc.CallOption) (*UpsertConfigResponse, error)
+	UpdateConfig(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*UpdateConfigResponse, error)
+	AddConfig(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*UpdateConfigResponse, error)
 	RemoveConfig(ctx context.Context, in *RemoveConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListCollection(ctx context.Context, in *ListCollectionRequest, opts ...grpc.CallOption) (*ListCollectionResponse, error)
 	CollectionDetail(ctx context.Context, in *CollectionDetailRequest, opts ...grpc.CallOption) (*CollectionDetailResponse, error)
@@ -43,9 +44,18 @@ func (c *konfigClient) ListConfigs(ctx context.Context, in *ListConfigsRequest, 
 	return out, nil
 }
 
-func (c *konfigClient) UpsertConfig(ctx context.Context, in *UpsertConfigRequest, opts ...grpc.CallOption) (*UpsertConfigResponse, error) {
-	out := new(UpsertConfigResponse)
-	err := c.cc.Invoke(ctx, "/pb.Konfig/UpsertConfig", in, out, opts...)
+func (c *konfigClient) UpdateConfig(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*UpdateConfigResponse, error) {
+	out := new(UpdateConfigResponse)
+	err := c.cc.Invoke(ctx, "/pb.Konfig/UpdateConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *konfigClient) AddConfig(ctx context.Context, in *UpdateConfigRequest, opts ...grpc.CallOption) (*UpdateConfigResponse, error) {
+	out := new(UpdateConfigResponse)
+	err := c.cc.Invoke(ctx, "/pb.Konfig/AddConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +94,8 @@ func (c *konfigClient) CollectionDetail(ctx context.Context, in *CollectionDetai
 // for forward compatibility
 type KonfigServer interface {
 	ListConfigs(context.Context, *ListConfigsRequest) (*ListConfigsResponse, error)
-	UpsertConfig(context.Context, *UpsertConfigRequest) (*UpsertConfigResponse, error)
+	UpdateConfig(context.Context, *UpdateConfigRequest) (*UpdateConfigResponse, error)
+	AddConfig(context.Context, *UpdateConfigRequest) (*UpdateConfigResponse, error)
 	RemoveConfig(context.Context, *RemoveConfigRequest) (*emptypb.Empty, error)
 	ListCollection(context.Context, *ListCollectionRequest) (*ListCollectionResponse, error)
 	CollectionDetail(context.Context, *CollectionDetailRequest) (*CollectionDetailResponse, error)
@@ -98,8 +109,11 @@ type UnimplementedKonfigServer struct {
 func (UnimplementedKonfigServer) ListConfigs(context.Context, *ListConfigsRequest) (*ListConfigsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListConfigs not implemented")
 }
-func (UnimplementedKonfigServer) UpsertConfig(context.Context, *UpsertConfigRequest) (*UpsertConfigResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpsertConfig not implemented")
+func (UnimplementedKonfigServer) UpdateConfig(context.Context, *UpdateConfigRequest) (*UpdateConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfig not implemented")
+}
+func (UnimplementedKonfigServer) AddConfig(context.Context, *UpdateConfigRequest) (*UpdateConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddConfig not implemented")
 }
 func (UnimplementedKonfigServer) RemoveConfig(context.Context, *RemoveConfigRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveConfig not implemented")
@@ -141,20 +155,38 @@ func _Konfig_ListConfigs_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Konfig_UpsertConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertConfigRequest)
+func _Konfig_UpdateConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KonfigServer).UpsertConfig(ctx, in)
+		return srv.(KonfigServer).UpdateConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Konfig/UpsertConfig",
+		FullMethod: "/pb.Konfig/UpdateConfig",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KonfigServer).UpsertConfig(ctx, req.(*UpsertConfigRequest))
+		return srv.(KonfigServer).UpdateConfig(ctx, req.(*UpdateConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Konfig_AddConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KonfigServer).AddConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Konfig/AddConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KonfigServer).AddConfig(ctx, req.(*UpdateConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -225,8 +257,12 @@ var Konfig_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Konfig_ListConfigs_Handler,
 		},
 		{
-			MethodName: "UpsertConfig",
-			Handler:    _Konfig_UpsertConfig_Handler,
+			MethodName: "UpdateConfig",
+			Handler:    _Konfig_UpdateConfig_Handler,
+		},
+		{
+			MethodName: "AddConfig",
+			Handler:    _Konfig_AddConfig_Handler,
 		},
 		{
 			MethodName: "RemoveConfig",

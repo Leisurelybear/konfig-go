@@ -16,9 +16,16 @@ service Konfig {
     };
   }
 
-  rpc UpsertConfig(UpsertConfigRequest) returns (UpsertConfigResponse){
+  rpc UpdateConfig(UpdateConfigRequest) returns (UpdateConfigResponse){
     option (google.api.http) = {
-      post: "/config/upsert"  // 定义 HTTP 路径和方法
+      post: "/config/update"  // 定义 HTTP 路径和方法
+      body: "*"
+    };
+  }
+
+  rpc AddConfig(UpdateConfigRequest) returns (UpdateConfigResponse){
+    option (google.api.http) = {
+      post: "/config/add"  // 定义 HTTP 路径和方法
       body: "*"
     };
   }
@@ -113,14 +120,14 @@ message CollectionDetailResponse {
   Collection collection = 1;
 }
 
-message UpsertConfigRequest{
+message UpdateConfigRequest{
   int64 ID = 1;
   int64 collectionID = 2;
   string name = 3;
   string key = 4;
   string value = 5;
 }
-message UpsertConfigResponse{
+message UpdateConfigResponse{
   Config config = 1;
 }
 message RemoveConfigRequest{

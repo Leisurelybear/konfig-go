@@ -21,8 +21,8 @@ func (s *Server) ListCollection(ctx context.Context, request *pb.ListCollectionR
 func (s *Server) CollectionDetail(ctx context.Context, request *pb.CollectionDetailRequest) (*pb.CollectionDetailResponse, error) {
 	return collection.Detail(ctx, request)
 }
-func (s *Server) UpsertConfig(ctx context.Context, request *pb.UpsertConfigRequest) (*pb.UpsertConfigResponse, error) {
-	return config.Upsert(ctx, request)
+func (s *Server) UpdateConfig(ctx context.Context, request *pb.UpdateConfigRequest) (*pb.UpdateConfigResponse, error) {
+	return config.Update(ctx, request)
 }
 func (s *Server) RemoveConfig(ctx context.Context, request *pb.RemoveConfigRequest) (*emptypb.Empty, error) {
 	return &emptypb.Empty{}, config.RemoveConfig(ctx, request)

@@ -12,7 +12,7 @@ import (
 	"konfig-go/pb"
 )
 
-func Upsert(ctx context.Context, request *pb.UpsertConfigRequest) (*pb.UpsertConfigResponse, error) {
+func Update(ctx context.Context, request *pb.UpdateConfigRequest) (*pb.UpdateConfigResponse, error) {
 	coll, err := checkRequest(ctx, request)
 	if err != nil {
 		return nil, errorutils.Wrap(err)
@@ -52,11 +52,11 @@ func Upsert(ctx context.Context, request *pb.UpsertConfigRequest) (*pb.UpsertCon
 	if err != nil {
 		logger.Logger.Error(ctx, "error to produce config update message, err:%v", err)
 	}
-	return &pb.UpsertConfigResponse{Config: newConfig.ConvertToDTO()}, nil
+	return &pb.UpdateConfigResponse{Config: newConfig.ConvertToDTO()}, nil
 }
 
-func checkRequest(ctx context.Context, request *pb.UpsertConfigRequest) (*collection.Collection, error) {
-	if request.CollectionID == 0 || request.Key == "" || request.Name == "" {
+func checkRequest(ctx context.Context, request *pb.UpdateConfigRequest) (*collection.Collection, error) {
+	if request.CollectionID == 0 || request.Key == "" || request.Name == "" || request.ID == 0 {
 		logger.Logger.Error(ctx, "parameter is invalid[req:%v]", request)
 		return nil, errorutils.ErrInvalidParameters
 	}
@@ -68,10 +68,10 @@ func checkRequest(ctx context.Context, request *pb.UpsertConfigRequest) (*collec
 
 	cfg, err := mysql.ConfigDAO.GetByCollectionIDAndKey(ctx, request.CollectionID, request.Key)
 	if err != nil {
-		logger.Logger.Error(ctx, "query collection failed[err:%v]", err)
-		return nil, errorutils.ErrInvalidDuplicated
+		logger.Logger.Error(ctx, "query by collection failed[err:%v]", err)
+		return nil, errorutils.ErrNotFound
 	}
-	if cfg != nil {
+	if cfg != nil && cfg.ID != uint(request.ID) {
 		logger.Logger.Error(ctx, "config is duplicated[cid:%v, cname:%s, k:%v]", cfg.ID, cfg.Name, request.Key)
 		return nil, errorutils.ErrInvalidDuplicated
 	}
