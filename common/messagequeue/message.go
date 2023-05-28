@@ -1,18 +1,19 @@
 package messagequeue
 
 import (
-	"fmt"
+	"context"
+	"konfig-go/common/logger"
 	"sync"
 )
 
 type Message struct {
 	Topic string
-	Data  string
+	Data  interface{}
 }
 
 type MessageStore interface {
-	SaveMessage(topic, messageData string) error
-	GetMessages(topic string) ([]Message, error)
+	SaveMessage(ctx context.Context, topic string, messageData interface{}) error
+	GetMessages(ctx context.Context, topic string) ([]Message, error)
 }
 
 type InMemoryMessageStore struct {
@@ -26,7 +27,7 @@ func NewInMemoryMessageStore() *InMemoryMessageStore {
 	}
 }
 
-func (store *InMemoryMessageStore) SaveMessage(topic, messageData string) error {
+func (store *InMemoryMessageStore) SaveMessage(ctx context.Context, topic string, messageData interface{}) error {
 	store.Lock.Lock()
 	defer store.Lock.Unlock()
 
@@ -36,11 +37,12 @@ func (store *InMemoryMessageStore) SaveMessage(topic, messageData string) error 
 	}
 
 	store.Messages[topic] = append(store.Messages[topic], message)
-	fmt.Sprintf("Saved message: %s\n", messageData)
+	logger.Logger.Info(ctx, "Saved message: %s\n", messageData)
+
 	return nil
 }
 
-func (store *InMemoryMessageStore) GetMessages(topic string) ([]Message, error) {
+func (store *InMemoryMessageStore) GetMessages(ctx context.Context, topic string) ([]Message, error) {
 	store.Lock.RLock()
 	defer store.Lock.RUnlock()
 

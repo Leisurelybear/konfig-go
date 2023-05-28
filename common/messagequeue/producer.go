@@ -1,9 +1,12 @@
 package messagequeue
 
-import "fmt"
+import (
+	"context"
+	"konfig-go/common/logger"
+)
 
 type IProducer interface {
-	Produce(topic, messageData string) error
+	Produce(ctx context.Context, topic string, messageData interface{}) error
 }
 
 type Producer struct {
@@ -15,10 +18,10 @@ func NewProducer(messageStore MessageStore) *Producer {
 		MessageStore: messageStore,
 	}
 }
-func (producer *Producer) Produce(topic, messageData string) error {
+func (producer *Producer) Produce(ctx context.Context, topic string, messageData interface{}) error {
 	err := producer.MessageStore.SaveMessage(topic, messageData)
 	if err != nil {
-		fmt.Sprintf("Failed to save message: %v\n", err)
+		logger.Logger.Error(ctx, "Failed to save message: %v\n", err)
 	}
 	return err
 }

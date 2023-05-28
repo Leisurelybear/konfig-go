@@ -1,12 +1,14 @@
 package messagequeue
 
 import (
+	"context"
 	"fmt"
+	"konfig-go/common/logger"
 	"time"
 )
 
 type IConsumer interface {
-	Consume()
+	Consume(ctx context.Context, handleFunc func(data interface{}) error)
 	Close()
 }
 
@@ -28,7 +30,7 @@ func NewConsumer(id int, topic string, offset int, messageStore MessageStore) *C
 	}
 }
 
-func (consumer *Consumer) Consume() {
+func (consumer *Consumer) Consume(ctx context.Context, handleFunc func(data interface{}) error) {
 	for {
 		messages, err := consumer.MessageStore.GetMessages(consumer.Topic)
 		if err != nil {
@@ -38,8 +40,14 @@ func (consumer *Consumer) Consume() {
 
 		for i := consumer.Offset; i < len(messages); i++ {
 			message := messages[i]
-			fmt.Sprintf("Consumer %d - Consumed: %s\n", consumer.ID, message.Data)
-			consumer.Offset = i + 1
+			er := handleFunc(message.Data)
+			if er != nil {
+				logger.Logger.Error(ctx, "error to consume %d - err: %v\n", consumer.ID, er)
+				break
+			} else {
+				consumer.Offset = i + 1
+				logger.Logger.Info(ctx, "Consumer %d - Consumed: %s\n", consumer.ID, message.Data)
+			}
 
 			select {
 			case <-consumer.doneCh:
