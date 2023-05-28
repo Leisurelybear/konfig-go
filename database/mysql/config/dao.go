@@ -60,7 +60,7 @@ func (dao *ConfigDAO) Delete(ctx context.Context, config *Config) error {
 	return dao.db.WithContext(ctx).Delete(config).Error
 }
 
-// GetByID gets a config by ID
+// GetByID gets a config by id
 func (dao *ConfigDAO) GetByID(ctx context.Context, id uint) (*Config, error) {
 	var config Config
 	if err := dao.db.WithContext(ctx).First(&config, id).Error; err != nil {

@@ -4,6 +4,7 @@ package pb;
 option go_package = "/pb";
 import "google/api/annotations.proto";
 import public "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 //go:generate cd konfig-go
 //go:generate protoc --go_out=. --go-grpc_out=. --grpc-gateway_out=. --proto_path=./pb ./pb/konfig.proto
@@ -18,6 +19,13 @@ service Konfig {
   rpc UpsertConfig(UpsertConfigRequest) returns (UpsertConfigResponse){
     option (google.api.http) = {
       post: "/config/upsert"  // 定义 HTTP 路径和方法
+      body: "*"
+    };
+  }
+
+  rpc RemoveConfig(RemoveConfigRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/config/remove"  // 定义 HTTP 路径和方法
       body: "*"
     };
   }
@@ -115,3 +123,7 @@ message UpsertConfigRequest{
 message UpsertConfigResponse{
   Config config = 1;
 }
+message RemoveConfigRequest{
+  int64 ID = 1;
+}
+

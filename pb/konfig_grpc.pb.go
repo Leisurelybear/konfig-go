@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 type KonfigClient interface {
 	ListConfigs(ctx context.Context, in *ListConfigsRequest, opts ...grpc.CallOption) (*ListConfigsResponse, error)
 	UpsertConfig(ctx context.Context, in *UpsertConfigRequest, opts ...grpc.CallOption) (*UpsertConfigResponse, error)
+	RemoveConfig(ctx context.Context, in *RemoveConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListCollection(ctx context.Context, in *ListCollectionRequest, opts ...grpc.CallOption) (*ListCollectionResponse, error)
 	CollectionDetail(ctx context.Context, in *CollectionDetailRequest, opts ...grpc.CallOption) (*CollectionDetailResponse, error)
 }
@@ -50,6 +52,15 @@ func (c *konfigClient) UpsertConfig(ctx context.Context, in *UpsertConfigRequest
 	return out, nil
 }
 
+func (c *konfigClient) RemoveConfig(ctx context.Context, in *RemoveConfigRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/pb.Konfig/RemoveConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *konfigClient) ListCollection(ctx context.Context, in *ListCollectionRequest, opts ...grpc.CallOption) (*ListCollectionResponse, error) {
 	out := new(ListCollectionResponse)
 	err := c.cc.Invoke(ctx, "/pb.Konfig/ListCollection", in, out, opts...)
@@ -74,6 +85,7 @@ func (c *konfigClient) CollectionDetail(ctx context.Context, in *CollectionDetai
 type KonfigServer interface {
 	ListConfigs(context.Context, *ListConfigsRequest) (*ListConfigsResponse, error)
 	UpsertConfig(context.Context, *UpsertConfigRequest) (*UpsertConfigResponse, error)
+	RemoveConfig(context.Context, *RemoveConfigRequest) (*emptypb.Empty, error)
 	ListCollection(context.Context, *ListCollectionRequest) (*ListCollectionResponse, error)
 	CollectionDetail(context.Context, *CollectionDetailRequest) (*CollectionDetailResponse, error)
 	mustEmbedUnimplementedKonfigServer()
@@ -88,6 +100,9 @@ func (UnimplementedKonfigServer) ListConfigs(context.Context, *ListConfigsReques
 }
 func (UnimplementedKonfigServer) UpsertConfig(context.Context, *UpsertConfigRequest) (*UpsertConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpsertConfig not implemented")
+}
+func (UnimplementedKonfigServer) RemoveConfig(context.Context, *RemoveConfigRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveConfig not implemented")
 }
 func (UnimplementedKonfigServer) ListCollection(context.Context, *ListCollectionRequest) (*ListCollectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCollection not implemented")
@@ -144,6 +159,24 @@ func _Konfig_UpsertConfig_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Konfig_RemoveConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KonfigServer).RemoveConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Konfig/RemoveConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KonfigServer).RemoveConfig(ctx, req.(*RemoveConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Konfig_ListCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListCollectionRequest)
 	if err := dec(in); err != nil {
@@ -194,6 +227,10 @@ var Konfig_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpsertConfig",
 			Handler:    _Konfig_UpsertConfig_Handler,
+		},
+		{
+			MethodName: "RemoveConfig",
+			Handler:    _Konfig_RemoveConfig_Handler,
 		},
 		{
 			MethodName: "ListCollection",

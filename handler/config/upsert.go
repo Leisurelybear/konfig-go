@@ -68,7 +68,7 @@ func checkRequest(ctx context.Context, request *pb.UpsertConfigRequest) (*collec
 		return nil, errorutils.ErrInvalidDuplicated
 	}
 	if cfg != nil {
-		logger.Logger.Error(ctx, "collection is duplicated[cid:%v, k:%v]", request.CollectionID, request.Key)
+		logger.Logger.Error(ctx, "config is duplicated[cid:%v, cname:%s, k:%v]", cfg.ID, cfg.Name, request.Key)
 		return nil, errorutils.ErrInvalidDuplicated
 	}
 	return coll, nil

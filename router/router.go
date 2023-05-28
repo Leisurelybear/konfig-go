@@ -2,6 +2,7 @@ package router
 
 import (
 	"context"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"konfig-go/handler/collection"
 	"konfig-go/handler/config"
 	"konfig-go/pb"
@@ -22,4 +23,7 @@ func (s *Server) CollectionDetail(ctx context.Context, request *pb.CollectionDet
 }
 func (s *Server) UpsertConfig(ctx context.Context, request *pb.UpsertConfigRequest) (*pb.UpsertConfigResponse, error) {
 	return config.Upsert(ctx, request)
+}
+func (s *Server) RemoveConfig(ctx context.Context, request *pb.RemoveConfigRequest) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, config.RemoveConfig(ctx, request)
 }
