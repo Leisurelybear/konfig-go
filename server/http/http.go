@@ -24,9 +24,35 @@ func Run(config conf.Config) {
 		log.Fatalf("failed to register gateway: %v", err)
 	}
 
+	// 启用CORS
+	handler := enableCORS(gwMux)
+
 	// 启动HTTP服务器
 	log.Println("HTTP server listening on port ", config.AppConfig.HttpPort)
-	if err := http.ListenAndServe(config.AppConfig.HttpPort, gwMux); err != nil {
+	if err := http.ListenAndServe(config.AppConfig.HttpPort, handler); err != nil {
 		log.Fatalf("failed to serve HTTP: %v", err)
 	}
+}
+
+// enableCORS 是一个中间件函数，用于启用CORS支持
+func enableCORS(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// 允许的来源，可以根据需求进行调整
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		// 允许的HTTP方法
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+
+		// 允许的请求头
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// 处理预检请求
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		// 继续处理请求
+		handler.ServeHTTP(w, r)
+	})
 }
