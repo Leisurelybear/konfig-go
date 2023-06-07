@@ -26,7 +26,7 @@ func List(ctx context.Context, request *pb.ListCollectionRequest) (*pb.ListColle
 	// get count of configs in each collection
 	configCountsMap, err := mysql.ConfigDAO.CountByCollectionIDs(ctx, collIDs)
 	if err != nil {
-		logger.Logger.Error(ctx, "error to find configCounts [collIDs:%s,err:%v]", collIDs, err)
+		logger.Logger.Error(ctx, "error to find configCounts [collIDs:%v,err:%v]", collIDs, err)
 	}
 	for _, coll := range respColls {
 		coll.ConfigCount = configCountsMap[coll.ID]
